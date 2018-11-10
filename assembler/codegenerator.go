@@ -1,7 +1,7 @@
 package assembler
 
 import (
-	token "nand2tetris/token"
+	token "github.com/anujva/nand2tetris/token"
 )
 
 // CodeGenInterface defines the behavior that we

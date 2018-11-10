@@ -1,9 +1,10 @@
 package assembler
 
 import (
-	token "nand2tetris/token"
 	"regexp"
 	"strings"
+
+	token "github.com/anujva/nand2tetris/token"
 )
 
 //Parser for parsing the hack program
