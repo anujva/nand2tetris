@@ -47,3 +47,8 @@ type CodeGenInterface interface {
 type CodeGenerator struct {
 	tokenToMachine map[string]string
 }
+
+func (cg *CodeGenerator) translateInstruction(token token.Token) string {
+	// The code generator will look at the token and translate it into
+	// string.
+}
