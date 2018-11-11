@@ -1,4 +1,4 @@
-package assembler
+package parser
 
 import (
 	"fmt"
@@ -56,6 +56,7 @@ var code = `
 `
 
 func TestPrintLinesAfterRemovingWhiteSpaces(t *testing.T) {
+	t.Skip()
 	codeLines := strings.Split(code, "\n")
 	fmt.Println("The line with whitespaces removed:")
 	for _, codeLine := range codeLines {
@@ -63,5 +64,14 @@ func TestPrintLinesAfterRemovingWhiteSpaces(t *testing.T) {
 		if len(l) != 0 {
 			fmt.Println(l)
 		}
+	}
+}
+
+func TestParser(t *testing.T) {
+	parser := New()
+	tokens := parser.Parse("@123")
+
+	for _, token := range tokens {
+		fmt.Printf("%+v", token)
 	}
 }
