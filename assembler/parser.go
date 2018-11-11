@@ -53,7 +53,30 @@ func removeInsideWhiteSpaces(str string) string {
 func sliceIntoTokenStrings(wr string) []string {
 	// What should we do here.. we have the string without any ws
 	// so the idea should be ok
+	// At this point we knwo that each line that we get will need
+	// to be split up into either a instruction or c instruction.
+
+	switch c := isAInstruction(wr); c {
+	case true:
+		return []string{"@", wr[1:]}
+	case false:
+		return splitCInstruction(wr)
+	}
 	return nil
+}
+
+func splitCInstruction(wr string) []string {
+	result = make([]string, 0)
+	intermediate := strings.Split(wr, "=")
+	append(result, intermediate[0])
+	final := strings.Split(intermediate, ";")
+	append(result, final[0])
+	append(result, final[1])
+	return result
+}
+
+func isAInstruction(wr string) bool {
+	return strings.HasPrefix(wr, "@")
 }
 
 func convertToTokens(ss []string) []token.Token {

@@ -26,7 +26,7 @@ var code = `
 // Draws a rectangle at the top-left corner of the screen.
 // The rectangle is 16 pixels wide and R0 pixels high.
 
-   @0
+   @0 //This is another whitespace that will need to be removed
    D=M
    @INFINITE_LOOP
    D;JLE 
@@ -55,9 +55,9 @@ var code = `
    0;JMP
 `
 
-func PrintLinesAfterRemovingWhiteSpaces(t *testing.T) {
+func TestPrintLinesAfterRemovingWhiteSpaces(t *testing.T) {
 	codeLines := strings.Split(code, "\n")
-
+	fmt.Println("The line with whitespaces removed:")
 	for _, codeLine := range codeLines {
 		l := removeWhiteSpaces(codeLine)
 		if len(l) != 0 {
