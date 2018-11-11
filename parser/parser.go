@@ -1,7 +1,8 @@
-package assembler
+package parser
 
 import (
 	"regexp"
+	"strconv"
 	"strings"
 
 	token "github.com/anujva/nand2tetris/token"
@@ -9,16 +10,21 @@ import (
 
 //Parser for parsing the hack program
 type Parser interface {
-	parse(line string) []token.Token
+	Parse(line string) []token.Token
+}
+
+// New returns an implementation of Parser
+func New() Parser {
+	return &HackParser{}
 }
 
 //HackParser is an implementation of Parser
 //and knows how to parse for hack language specs
 type HackParser struct {
-	line string
 }
 
-func (h *HackParser) parse(line string) []token.Token {
+// Parse the line into Hack Tokens
+func (h *HackParser) Parse(line string) []token.Token {
 	wr := removeWhiteSpaces(line)
 	if len(wr) == 0 {
 		return nil
@@ -66,12 +72,12 @@ func sliceIntoTokenStrings(wr string) []string {
 }
 
 func splitCInstruction(wr string) []string {
-	result = make([]string, 0)
+	result := make([]string, 0)
 	intermediate := strings.Split(wr, "=")
-	append(result, intermediate[0])
-	final := strings.Split(intermediate, ";")
-	append(result, final[0])
-	append(result, final[1])
+	result = append(result, intermediate[0])
+	final := strings.Split(intermediate[1], ";")
+	result = append(result, final[0])
+	result = append(result, final[1])
 	return result
 }
 
@@ -80,5 +86,36 @@ func isAInstruction(wr string) bool {
 }
 
 func convertToTokens(ss []string) []token.Token {
-	return nil
+	if ss[0] == "@" {
+		if _, err := strconv.Atoi(ss[1]); err == nil {
+			return []token.Token{
+				token.Token{
+					token.ADDRESS,
+					ss[1],
+				},
+			}
+		}
+		return []token.Token{
+			token.Token{
+				token.SYMBOL,
+				ss[1],
+			},
+		}
+	}
+
+	// this is a c instruction
+	return []token.Token{
+		token.Token{
+			token.DEST,
+			ss[0],
+		},
+		token.Token{
+			token.COMP,
+			ss[1],
+		},
+		token.Token{
+			token.JUMP,
+			ss[2],
+		},
+	}
 }
