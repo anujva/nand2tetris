@@ -47,6 +47,10 @@ func New() {
 	return &codeGenerator{}
 }
 
+func getDestMap() map[string]string {
+	return nil
+}
+
 // CodeGenerator is an implementation of the
 // CodeGenInterface, will be used to work the
 // strings that are read from the source code.

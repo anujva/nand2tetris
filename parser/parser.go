@@ -71,13 +71,25 @@ func sliceIntoTokenStrings(wr string) []string {
 	return nil
 }
 
+// splitCInstruction will split the instruction into three parts
+// DEST=CMP;JMP
+// Apart from the normal values, it is possible for the slice of
+// string to return null, CMP, null
 func splitCInstruction(wr string) []string {
 	result := make([]string, 0)
 	intermediate := strings.Split(wr, "=")
+	if len(intermediate) != 2 {
+		//Probably destination is missing the instruction
+		intermediate = append([]string{"null"}, intermediate...)
+	}
 	result = append(result, intermediate[0])
 	final := strings.Split(intermediate[1], ";")
 	result = append(result, final[0])
-	result = append(result, final[1])
+	if len(final) == 2 && final[1] != "" {
+		result = append(result, final[1])
+	} else {
+		result = append(result, "null")
+	}
 	return result
 }
 

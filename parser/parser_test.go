@@ -72,6 +72,31 @@ func TestParser(t *testing.T) {
 	tokens := parser.Parse("@123")
 
 	for _, token := range tokens {
-		fmt.Printf("%+v", token)
+		fmt.Printf("%+v\n", token)
 	}
+}
+
+func TestSplitCInstruction(t *testing.T) {
+	val := splitCInstruction("CMP")
+	fmt.Printf("%+v\n", val)
+}
+
+func TestSplitCInstructionAnotherWay(t *testing.T) {
+	val := splitCInstruction("CMP;JMP")
+	fmt.Printf("%+v\n", val)
+}
+
+func TestSplitCInstructionOneMoreWay(t *testing.T) {
+	val := splitCInstruction("DEST=CMP")
+	fmt.Printf("%+v\n", val)
+}
+
+func TestSplitCInstructionWithTrailing(t *testing.T) {
+	val := splitCInstruction("DEST=CMP;")
+	fmt.Printf("%+v\n", val)
+}
+
+func TestSplitCInstructionFull(t *testing.T) {
+	val := splitCInstruction("DEST=CMP;JMP")
+	fmt.Printf("%+v\n", val)
 }
