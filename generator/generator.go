@@ -1,4 +1,4 @@
-package assembler
+package generator
 
 import (
 	token "github.com/anujva/nand2tetris/token"
@@ -38,17 +38,28 @@ func initializeSymbolTable() map[string]string {
 // a token and will return a string which will be
 // the machine language equivalent of it.
 type CodeGenInterface interface {
-	translateInstruction(token token.Token) string
+	translateToken(token token.Token) string
+}
+
+// New returns an implementation of the code generator
+func New() {
+	destMap := getDestMap()
+	return &codeGenerator{}
 }
 
 // CodeGenerator is an implementation of the
 // CodeGenInterface, will be used to work the
 // strings that are read from the source code.
-type CodeGenerator struct {
-	tokenToMachine map[string]string
+type codeGenerator struct {
+	destMap map[string]string
 }
 
-func (cg *CodeGenerator) translateInstruction(token token.Token) string {
+func (cg *codeGenerator) translateToken(token token.Token) string {
 	// The code generator will look at the token and translate it into
 	// string.
+	switch token.Type {
+	case token.DEST:
+		//lookup the dest map to find the string to return
+		return cg.destMap[token.Val]
+	}
 }
