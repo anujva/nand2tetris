@@ -40,7 +40,7 @@ func initializeSymbolTable() map[string]int {
 // a token and will return a string which will be
 // the machine language equivalent of it.
 type CodeGenInterface interface {
-	translateToken(token token.Token) (string, error)
+	TranslateToken(token token.Token) (string, error)
 }
 
 // New returns an implementation of the code generator
@@ -80,34 +80,34 @@ func getJumpMap() map[string]string {
 
 func getCompMap() map[string]string {
 	compMap := make(map[string]string)
-	compMap["0"] = "0101010"
-	compMap["1"] = "0111111"
-	compMap["-1"] = "0111010"
-	compMap["D"] = "0001100"
-	compMap["A"] = "0110000"
-	compMap["!D"] = "0001101"
-	compMap["!A"] = "0110001"
-	compMap["-D"] = "0001111"
-	compMap["-A"] = "0110011"
-	compMap["D+1"] = "0011111"
-	compMap["A+1"] = "0110111"
-	compMap["D-1"] = "0001110"
-	compMap["A-1"] = "0110010"
-	compMap["D+A"] = "0000010"
-	compMap["D-A"] = "0010011"
-	compMap["A-D"] = "0000111"
-	compMap["D&A"] = "0000000"
-	compMap["D|A"] = "0010101"
-	compMap["M"] = "1110000"
-	compMap["!M"] = "1110001"
-	compMap["-M"] = "1110011"
-	compMap["M+1"] = "1110111"
-	compMap["M-1"] = "1110010"
-	compMap["D+M"] = "1000010"
-	compMap["D-M"] = "1010011"
-	compMap["M-D"] = "1000111"
-	compMap["D&M"] = "1000000"
-	compMap["D|M"] = "1010101"
+	compMap["0"] = "1110101010"
+	compMap["1"] = "1110111111"
+	compMap["-1"] = "1110111010"
+	compMap["D"] = "1110001100"
+	compMap["A"] = "1110110000"
+	compMap["!D"] = "1110001101"
+	compMap["!A"] = "1110110001"
+	compMap["-D"] = "1110001111"
+	compMap["-A"] = "1110110011"
+	compMap["D+1"] = "1110011111"
+	compMap["A+1"] = "1110110111"
+	compMap["D-1"] = "1110001110"
+	compMap["A-1"] = "1110110010"
+	compMap["D+A"] = "1110000010"
+	compMap["D-A"] = "1110010011"
+	compMap["A-D"] = "1110000111"
+	compMap["D&A"] = "1110000000"
+	compMap["D|A"] = "1110010101"
+	compMap["M"] = "1111110000"
+	compMap["!M"] = "1111110001"
+	compMap["-M"] = "1111110011"
+	compMap["M+1"] = "1111110111"
+	compMap["M-1"] = "1111110010"
+	compMap["D+M"] = "1111000010"
+	compMap["D-M"] = "1111010011"
+	compMap["M-D"] = "1111000111"
+	compMap["D&M"] = "1111000000"
+	compMap["D|M"] = "1111010101"
 	return compMap
 }
 
@@ -150,7 +150,7 @@ func getAsBinaryString(val int) string {
 	return getAsBinaryString(val/2) + "1"
 }
 
-func (cg *codeGenerator) translateToken(t token.Token) (string, error) {
+func (cg *codeGenerator) TranslateToken(t token.Token) (string, error) {
 	// The code generator will look at the token and translate it into
 	// string.
 	switch t.Type {

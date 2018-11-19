@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"log"
 	"os"
+
+	"github.com/anujva/nand2tetris/assembler"
 )
 
 //Iterable defines an interface that can be iterated
@@ -51,36 +53,43 @@ func (f *FileReader) next() string {
 //NewFileReader returns a pointer to a fileReader object
 func NewFileReader(fileName string, scanner ...*bufio.Scanner) *FileReader {
 	if scanner == nil {
+		fmt.Println(os.Getwd())
 		file, err := os.Open(fileName)
 		if err != nil {
 			log.Fatal(err)
 		}
-		scanner = bufio.NewScanner(file)
+		scanner = make([]*bufio.Scanner, 1)
+		scanner[0] = bufio.NewScanner(file)
 	}
 
 	var line *string
-	if scanner.Scan() {
-		line = StrPtr(scanner.Text())
+	if scanner[0].Scan() {
+		line = StrPtr(scanner[0].Text())
 	}
 
 	fileReader := &FileReader{
 		fileName: fileName,
-		scanner:  scanner,
+		scanner:  scanner[0],
 		line:     line,
 	}
 
 	return fileReader
 }
 
-func readLineAndPerformAction(itr FileIterable) {
+func readLineAndPerformAction(
+	itr FileIterable,
+	a *assembler.HackAssembler,
+) {
 	for itr.hasNext() {
 		str := itr.next()
-		fmt.Println(str)
+		tkns := a.Parser.Parse(str)
+		finalString := ""
 	}
 }
 
 func main() {
 	//Read in the file
-	fileReader := NewFileReader(nil, "add/Add.asm")
-	readLineAndPerformAction(fileReader)
+	fileReader := NewFileReader("/Users/anujvarma/code/nand2tetris/projects/06/add/Add.asm")
+	a := assembler.New()
+	readLineAndPerformAction(fileReader, a)
 }
