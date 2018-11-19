@@ -40,7 +40,7 @@ func initializeSymbolTable() map[string]int {
 // a token and will return a string which will be
 // the machine language equivalent of it.
 type CodeGenInterface interface {
-	translateToken(token token.Token) string
+	translateToken(token token.Token) (string, error)
 }
 
 // New returns an implementation of the code generator
@@ -124,27 +124,40 @@ func (cg *codeGenerator) getAddressString(add string) (string, error) {
 	// Address has to of type string
 	valAsInt, err := strconv.Atoi(add)
 	if err != nil {
-		return nil, err
+		return "", err
 	}
 	binaryString := getAsBinaryString(valAsInt)
+	return binaryString, nil
 }
 
 func getAsBinaryString(val int) string {
+	if val == 0 {
+		return "0"
+	}
 
+	if val%2 == 0 {
+		return getAsBinaryString(val/2) + "0"
+	}
+	return getAsBinaryString(val/2) + "1"
 }
 
-func (cg *codeGenerator) translateToken(token token.Token) string {
+func (cg *codeGenerator) translateToken(t token.Token) (string, error) {
 	// The code generator will look at the token and translate it into
 	// string.
-	switch token.Type {
+	switch t.Type {
 	case token.DEST:
 		// lookup the dest map to find the string to return
-		return cg.destMap[token.Val]
+		return cg.destMap[t.Val], nil
 	case token.COMP:
-		return cg.compMap[token.Val]
+		return cg.compMap[t.Val], nil
 	case token.JUMP:
-		return cg.jumpMap[token.Val]
+		return cg.jumpMap[t.Val], nil
 	case token.ADDRESS:
-		return cg.getAddressString(token.Val)
+		s, err := cg.getAddressString(t.Val)
+		if err != nil {
+			return "", err
+		}
+		return s, nil
 	}
+	return "", nil
 }

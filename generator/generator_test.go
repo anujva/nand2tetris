@@ -9,12 +9,42 @@ import (
 
 //Will write some tests for the package here
 
-func testCodeGenerator(t *testing.T) {
+func TestCodeGenerator(t *testing.T) {
 	cg := New()
 	tok := token.Token{
 		Type: token.COMP,
 		Val:  "D+M",
 	}
-	str := cg.translateToken(tok)
+	str, _ := cg.translateToken(tok)
 	fmt.Println("The translated token value: ", str)
+}
+
+func TestCodeGeneratorDest(t *testing.T) {
+	cg := New()
+	tok := token.Token{
+		Type: token.DEST,
+		Val:  "A",
+	}
+	str, _ := cg.translateToken(tok)
+	fmt.Println("The DEST translated token: ", str)
+}
+
+func TestCodeGeneratorJMP(t *testing.T) {
+	cg := New()
+	tok := token.Token{
+		Type: token.JUMP,
+		Val:  "null",
+	}
+	str, _ := cg.translateToken(tok)
+	fmt.Println("The JMP translated token: ", str)
+}
+
+func TestCodeGeneratorJMPSecond(t *testing.T) {
+	cg := New()
+	tok := token.Token{
+		Type: token.JUMP,
+		Val:  "JGT",
+	}
+	str, _ := cg.translateToken(tok)
+	fmt.Println("The JMP translated token: ", str)
 }
