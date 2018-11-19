@@ -127,12 +127,21 @@ func (cg *codeGenerator) getAddressString(add string) (string, error) {
 		return "", err
 	}
 	binaryString := getAsBinaryString(valAsInt)
+
+	//We will need to add a zero for the the binaryString
+	//then append it with as many zeros as need to make it
+	//15 bit long string
+	lenApp := 15 - len(binaryString)
+	for i := 0; i < lenApp; i++ {
+		binaryString = "0" + binaryString
+	}
+	binaryString = "0" + binaryString
 	return binaryString, nil
 }
 
 func getAsBinaryString(val int) string {
 	if val == 0 {
-		return "0"
+		return ""
 	}
 
 	if val%2 == 0 {

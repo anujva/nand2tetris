@@ -1,6 +1,11 @@
 package assembler
 
-import "os"
+import (
+	"os"
+
+	"github.com/anujva/nand2tetris/generator"
+	"github.com/anujva/nand2tetris/parser"
+)
 
 //HackAssembler is the assembler for HACK computer.
 type HackAssembler struct {
@@ -11,13 +16,18 @@ type HackAssembler struct {
 
 //New returns a pointer to an object of HackAssembler
 func New() *HackAssembler {
-	return &HackAssembler{}
+	return &HackAssembler{
+		parser: parser.New(),
+		code:   generator.New(),
+	}
 }
 
 //NewWithFile returns a HackAssemblers output file specified
 func NewWithFile(file *os.File) *HackAssembler {
 	return &HackAssembler{
 		outputfile: file,
+		parser:     parser.New(),
+		code:       generator.New(),
 	}
 }
 

@@ -7,11 +7,6 @@ import (
 	"os"
 )
 
-// HackAssembler behaviors
-type HackAssembler interface {
-	generateSymbols()
-}
-
 //Iterable defines an interface that can be iterated
 type Iterable interface {
 	hasNext() bool
@@ -54,7 +49,7 @@ func (f *FileReader) next() string {
 }
 
 //NewFileReader returns a pointer to a fileReader object
-func NewFileReader(scanner *bufio.Scanner, fileName string) *FileReader {
+func NewFileReader(fileName string, scanner ...*bufio.Scanner) *FileReader {
 	if scanner == nil {
 		file, err := os.Open(fileName)
 		if err != nil {

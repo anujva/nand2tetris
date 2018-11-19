@@ -48,3 +48,13 @@ func TestCodeGeneratorJMPSecond(t *testing.T) {
 	str, _ := cg.translateToken(tok)
 	fmt.Println("The JMP translated token: ", str)
 }
+
+func TestCodeGeneratorAddress(t *testing.T) {
+	cg := New()
+	tok := token.Token{
+		Type: token.ADDRESS,
+		Val:  "15",
+	}
+	str, _ := cg.translateToken(tok)
+	fmt.Println("The Address tranlated token: ", str)
+}
