@@ -53,7 +53,6 @@ func (f *FileReader) next() string {
 //NewFileReader returns a pointer to a fileReader object
 func NewFileReader(fileName string, scanner ...*bufio.Scanner) *FileReader {
 	if scanner == nil {
-		fmt.Println(os.Getwd())
 		file, err := os.Open(fileName)
 		if err != nil {
 			log.Fatal(err)
