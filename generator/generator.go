@@ -44,11 +44,22 @@ type CodeGenInterface interface {
 // New returns an implementation of the code generator
 func New() {
 	destMap := getDestMap()
-	return &codeGenerator{}
+	return &codeGenerator{
+		destMap: destMap,
+	}
 }
 
 func getDestMap() map[string]string {
-	return nil
+	destMap := make(map[string]string)
+	destMap["null"] = "000"
+	destMap["M"] = "001"
+	destMap["D"] = "010"
+	destMap["MD"] = "011"
+	destMap["A"] = "100"
+	destMap["AM"] = "101"
+	destMap["AD"] = "110"
+	destMap["AMD"] = "111"
+	return destMap
 }
 
 // CodeGenerator is an implementation of the
@@ -56,6 +67,8 @@ func getDestMap() map[string]string {
 // strings that are read from the source code.
 type codeGenerator struct {
 	destMap map[string]string
+	jumpMap map[string]string
+	compMap map[string]string
 }
 
 func (cg *codeGenerator) translateToken(token token.Token) string {
@@ -65,5 +78,9 @@ func (cg *codeGenerator) translateToken(token token.Token) string {
 	case token.DEST:
 		//lookup the dest map to find the string to return
 		return cg.destMap[token.Val]
+	case token.COMP:
+		return cg.compMap[token.Val]
+	case token.JUMP:
+		return cg.jumpMap[token.Val]
 	}
 }

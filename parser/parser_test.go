@@ -76,6 +76,15 @@ func TestParser(t *testing.T) {
 	}
 }
 
+func TestParserCInstruction(t *testing.T) {
+	parser := New()
+	tokens := parser.Parse("CMP;JMP")
+
+	for _, token := range tokens {
+		fmt.Printf("%+v\n", token)
+	}
+}
+
 func TestSplitCInstruction(t *testing.T) {
 	val := splitCInstruction("CMP")
 	fmt.Printf("%+v\n", val)
