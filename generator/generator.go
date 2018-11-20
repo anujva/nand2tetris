@@ -46,9 +46,12 @@ type CodeGenInterface interface {
 // New returns an implementation of the code generator
 func New() CodeGenInterface {
 	return &codeGenerator{
-		destMap: getDestMap(),
-		jumpMap: getJumpMap(),
-		compMap: getCompMap(),
+		destMap:    getDestMap(),
+		jumpMap:    getJumpMap(),
+		compMap:    getCompMap(),
+		predefMap:  initializeSymbolTable(),
+		varMap:     make(map[string]string),
+		varAddress: 16,
 	}
 }
 
@@ -115,16 +118,30 @@ func getCompMap() map[string]string {
 // CodeGenInterface, will be used to work the
 // strings that are read from the source code.
 type codeGenerator struct {
-	destMap map[string]string
-	jumpMap map[string]string
-	compMap map[string]string
+	destMap    map[string]string
+	jumpMap    map[string]string
+	compMap    map[string]string
+	predefMap  map[string]string
+	varMap     map[string]string
+	varAddress int
 }
 
 func (cg *codeGenerator) getAddressString(add string) (string, error) {
-	// Address has to of type string
-	valAsInt, err := strconv.Atoi(add)
-	if err != nil {
-		return "", err
+	valAsInt := 0
+	err := nil
+	// Check if its a predefined symbol
+	valAsInt, ok = cg.predefMap[add]
+	if !ok {
+		// Address has to of type string
+		valAsInt, err = strconv.Atoi(add)
+		if err != nil {
+			// It is not a number or a predefined symbol
+			// Which means it is a variable
+			if valAsInt, ok = cg.varMap[add]; !ok {
+				valAsInt = varAddress + 1
+				varAddress = varAddres + 1
+			}
+		}
 	}
 	binaryString := getAsBinaryString(valAsInt)
 
