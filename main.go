@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"path/filepath"
 
 	"github.com/anujva/nand2tetris/assembler"
 )
@@ -101,7 +102,7 @@ func readLineAndPerformAction(
 
 func main() {
 	//Read in the file
-	fileReader := NewFileReader("/home/anuj/nand2tetris/projects/06/max/MaxL.asm")
+	fileReader := NewFileReader(filepath.Clean(os.Args[1]))
 	a := assembler.New()
 	readLineAndPerformAction(fileReader, a)
 }
