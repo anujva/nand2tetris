@@ -82,21 +82,7 @@ func readLineAndPerformAction(
 ) {
 	for itr.hasNext() {
 		str := itr.next()
-		tkns := a.Parser.Parse(str)
-		finalString := ""
-		if len(tkns) == 3 {
-			//This is a c instruction
-			finalString1, _ := a.Code.TranslateToken(tkns[1])
-			finalString2, _ := a.Code.TranslateToken(tkns[0])
-			finalString3, _ := a.Code.TranslateToken(tkns[2])
-			finalString = finalString1 + finalString2 + finalString3
-		} else if len(tkns) == 1 {
-			//This is a instruction
-			finalString, _ = a.Code.TranslateToken(tkns[0])
-		}
-		if len(finalString) > 0 {
-			fmt.Println(finalString)
-		}
+		a.AssembleFile(str)
 	}
 }
 

@@ -50,7 +50,7 @@ func New() CodeGenInterface {
 		jumpMap:    getJumpMap(),
 		compMap:    getCompMap(),
 		predefMap:  initializeSymbolTable(),
-		varMap:     make(map[string]string),
+		varMap:     make(map[string]int),
 		varAddress: 16,
 	}
 }
@@ -121,31 +121,35 @@ type codeGenerator struct {
 	destMap    map[string]string
 	jumpMap    map[string]string
 	compMap    map[string]string
-	predefMap  map[string]string
-	varMap     map[string]string
+	predefMap  map[string]int
+	varMap     map[string]int
 	varAddress int
 }
 
 func (cg *codeGenerator) getAddressString(add string) (string, error) {
-	valAsInt := 0
-	err := nil
+	val := 0
+	var err error
 	// Check if its a predefined symbol
-	valAsInt, ok = cg.predefMap[add]
-	if !ok {
-		// Address has to of type string
-		valAsInt, err = strconv.Atoi(add)
-		if err != nil {
-			// It is not a number or a predefined symbol
-			// Which means it is a variable or it is a
-			// label symbol
-			if valAsInt, ok = cg.varMap[add]; !ok {
-				valAsInt = varAddress + 1
-				varAddress = varAddres + 1
-			}
-		}
+	if val, ok := cg.predefMap[add]; ok {
+		return getAsBinaryString(val), nil
 	}
-	binaryString := getAsBinaryString(valAsInt)
+	// Address has to of type string
+	val, err = strconv.Atoi(add)
+	if err == nil {
+		return getAsBinaryString(val), nil
+	}
+	// It is not a number or a predefined symbol
+	// Which means it is a variable or it is a
+	// label symbol
+	var ok bool
+	if val, ok = cg.varMap[add]; !ok {
+		val = cg.varAddress + 1
+		cg.varAddress = cg.varAddress + 1
+	}
+}
 
+func getAsBinaryString(val int) string {
+	binaryString := getAsBinaryStringSubroutine(val)
 	//We will need to add a zero for the the binaryString
 	//then append it with as many zeros as need to make it
 	//15 bit long string
@@ -154,18 +158,18 @@ func (cg *codeGenerator) getAddressString(add string) (string, error) {
 		binaryString = "0" + binaryString
 	}
 	binaryString = "0" + binaryString
-	return binaryString, nil
+	return binaryString
 }
 
-func getAsBinaryString(val int) string {
+func getAsBinaryStringSubroutine(val int) string {
 	if val == 0 {
 		return ""
 	}
 
 	if val%2 == 0 {
-		return getAsBinaryString(val/2) + "0"
+		return getAsBinaryStringSubroutine(val/2) + "0"
 	}
-	return getAsBinaryString(val/2) + "1"
+	return getAsBinaryStringSubroutine(val/2) + "1"
 }
 
 func (cg *codeGenerator) TranslateToken(t token.Token) (string, error) {
