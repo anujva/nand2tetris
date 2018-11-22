@@ -146,6 +146,7 @@ func (cg *codeGenerator) getAddressString(add string) (string, error) {
 		val = cg.varAddress + 1
 		cg.varAddress = cg.varAddress + 1
 	}
+	return getAsBinaryString(val), nil
 }
 
 func getAsBinaryString(val int) string {
