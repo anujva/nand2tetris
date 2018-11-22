@@ -136,7 +136,8 @@ func (cg *codeGenerator) getAddressString(add string) (string, error) {
 		valAsInt, err = strconv.Atoi(add)
 		if err != nil {
 			// It is not a number or a predefined symbol
-			// Which means it is a variable
+			// Which means it is a variable or it is a
+			// label symbol
 			if valAsInt, ok = cg.varMap[add]; !ok {
 				valAsInt = varAddress + 1
 				varAddress = varAddres + 1

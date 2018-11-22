@@ -1,6 +1,7 @@
 package assembler
 
 import (
+	"fmt"
 	"os"
 
 	"github.com/anujva/nand2tetris/generator"
@@ -12,6 +13,10 @@ type HackAssembler struct {
 	Outputfile *os.File
 	Parser     parser.Parser
 	Code       generator.CodeGenInterface
+	// It will be required for the assembler to store
+	// some state values. There is a need of storing line
+	// numbers that have not been resolved since we don't
+	// know the value of the symbol.
 }
 
 //New returns a pointer to an object of HackAssembler
@@ -36,8 +41,26 @@ func (ha *HackAssembler) SetOutputFile(file *os.File) {
 	ha.Outputfile = file
 }
 
-// What do I need an assembler to do? It should take in file
+// AssembleFile What do I need an assembler to do? It should take in file
 // And spit out another file that will be the assembled output
-func (ha *HackAssembler) assembleFile() {
-
+func (ha *HackAssembler) AssembleFile(str string) {
+	tkns := ha.Parser.Parse(str)
+	if len(tkns) == 0 {
+		// skip this.
+		return
+	}
+	finalString := ""
+	if len(tkns) == 3 {
+		//This is a c instruction
+		finalString1, _ := ha.Code.TranslateToken(tkns[1])
+		finalString2, _ := ha.Code.TranslateToken(tkns[0])
+		finalString3, _ := ha.Code.TranslateToken(tkns[2])
+		finalString = finalString1 + finalString2 + finalString3
+	} else if len(tkns) == 1 {
+		//This is a instruction
+		finalString, _ = ha.Code.TranslateToken(tkns[0])
+	}
+	if len(finalString) > 0 {
+		fmt.Println(finalString)
+	}
 }
