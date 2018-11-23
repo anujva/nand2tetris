@@ -1,6 +1,7 @@
 package generator
 
 import (
+	"fmt"
 	"strconv"
 
 	token "github.com/anujva/nand2tetris/token"
@@ -118,12 +119,10 @@ func getCompMap() map[string]string {
 // CodeGenInterface, will be used to work the
 // strings that are read from the source code.
 type codeGenerator struct {
-	destMap    map[string]string
-	jumpMap    map[string]string
-	compMap    map[string]string
-	predefMap  map[string]int
-	varMap     map[string]int
-	varAddress int
+	destMap   map[string]string
+	jumpMap   map[string]string
+	compMap   map[string]string
+	predefMap map[string]int
 }
 
 func (cg *codeGenerator) getAddressString(add string) (string, error) {
@@ -140,13 +139,27 @@ func (cg *codeGenerator) getAddressString(add string) (string, error) {
 	}
 	// It is not a number or a predefined symbol
 	// Which means it is a variable or it is a
-	// label symbol
+	// label symbol.. we need to see if we know
+	// the label already and have kept it in either
+	// the varMap or the labelMap
 	var ok bool
-	if val, ok = cg.varMap[add]; !ok {
-		val = cg.varAddress + 1
-		cg.varAddress = cg.varAddress + 1
+	if val, ok = cg.varMap[add]; ok {
+		return getAsBinaryString(val), nil
 	}
-	return getAsBinaryString(val), nil
+
+	if val, ok = cg.labelMap[add]; ok {
+		return getAsBinaryString(val), nil
+	}
+	return "", &labelUnknown{add, "label is unknown"}
+}
+
+type labelUnknown struct {
+	add  string
+	prob string
+}
+
+func (l *labelUnknown) Error() string {
+	return fmt.Sprintf("%s - %s", l.add, l.prob)
 }
 
 func getAsBinaryString(val int) string {

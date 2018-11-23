@@ -6,6 +6,7 @@ import (
 
 	"github.com/anujva/nand2tetris/generator"
 	"github.com/anujva/nand2tetris/parser"
+	"github.com/anujva/nand2tetris/token"
 )
 
 //HackAssembler is the assembler for HACK computer.
@@ -17,6 +18,9 @@ type HackAssembler struct {
 	// some state values. There is a need of storing line
 	// numbers that have not been resolved since we don't
 	// know the value of the symbol.
+	varAddress int
+	lineNumber int
+	unresolved []token.Token
 }
 
 //New returns a pointer to an object of HackAssembler
@@ -56,10 +60,22 @@ func (ha *HackAssembler) AssembleFile(str string) {
 		finalString2, _ := ha.Code.TranslateToken(tkns[0])
 		finalString3, _ := ha.Code.TranslateToken(tkns[2])
 		finalString = finalString1 + finalString2 + finalString3
+		if varsymunresolved {
+			if finalString3 == null {
+				// this is a variable
+			}
+			varsymunresolved = false
+		}
 	} else if len(tkns) == 1 {
 		//This is a instruction
-		finalString, _ = ha.Code.TranslateToken(tkns[0])
+		finalString, err = ha.Code.TranslateToken(tkns[0])
+		if err != nil {
+			// set unresolved flag to true
+			unresolved = true
+			ha.unresolved = append(ha.unresolved, tkns[0])
+		}
 	}
+
 	if len(finalString) > 0 {
 		fmt.Println(finalString)
 	}
