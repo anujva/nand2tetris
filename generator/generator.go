@@ -42,7 +42,7 @@ func New() *CodeGenerator {
 		destMap:   getDestMap(),
 		jumpMap:   getJumpMap(),
 		compMap:   getCompMap(),
-		predefMap: initializeSymbolTable(),
+		PredefMap: initializeSymbolTable(),
 		VarMap:    make(map[string]int),
 	}
 }
@@ -113,7 +113,7 @@ type CodeGenerator struct {
 	destMap   map[string]string
 	jumpMap   map[string]string
 	compMap   map[string]string
-	predefMap map[string]int
+	PredefMap map[string]int
 	VarMap    map[string]int
 }
 
@@ -121,8 +121,7 @@ func (cg *CodeGenerator) getAddressString(add string) (string, error) {
 	val := 0
 	var err error
 	// Check if its a predefined symbol
-	if val, ok := cg.predefMap[add]; ok {
-		fmt.Println("Getting the value from predefined: ", val)
+	if val, ok := cg.PredefMap[add]; ok {
 		return getAsBinaryString(val), nil
 	}
 	// Address has to of type string
@@ -189,7 +188,18 @@ func (cg *CodeGenerator) TranslateToken(t token.Token) (string, error) {
 	case token.JUMP:
 		return cg.jumpMap[t.Val], nil
 	case token.ADDRESS:
-		fmt.Println("GetAddressAsString called for: ", t.Val)
+		s, err := cg.getAddressString(t.Val)
+		if err != nil {
+			return "", err
+		}
+		return s, nil
+	case token.VARIABLE:
+		s, err := cg.getAddressString(t.Val)
+		if err != nil {
+			return "", err
+		}
+		return s, nil
+	case token.LABEL:
 		s, err := cg.getAddressString(t.Val)
 		if err != nil {
 			return "", err

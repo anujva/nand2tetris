@@ -58,6 +58,9 @@ func (ha *HackAssembler) FirstPass(str string) {
 	if len(tkns) == 1 && tkns[0].Type == token.LABEL {
 		ha.Code.VarMap[tkns[0].Val] = ha.lineNumber + 1
 	} else if len(tkns) == 1 && tkns[0].Type == token.VARIABLE {
+		if _, ok := ha.Code.PredefMap[tkns[0].Val]; ok {
+			return
+		}
 		if _, ok := ha.Code.VarMap[tkns[0].Val]; !ok {
 			ha.Code.VarMap[tkns[0].Val] = ha.varAddress + 1
 		}
