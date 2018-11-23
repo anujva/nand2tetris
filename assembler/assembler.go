@@ -18,19 +18,21 @@ type HackAssembler struct {
 	// some state values. There is a need of storing line
 	// numbers that have not been resolved since we don't
 	// know the value of the symbol.
-	varAddress int
-	lineNumber int
-	unresolved []token.Token
+	varAddress       int
+	lineNumber       int
+	unresolved       []token.Token
+	varsymunresolved bool
 }
 
 //New returns a pointer to an object of HackAssembler
 func New() *HackAssembler {
 	return &HackAssembler{
-		Parser:     parser.New(),
-		Code:       generator.New(),
-		varAddress: 16,
-		lineNumber: -1,
-		unresolved: make([]token.Token, 0),
+		Parser:           parser.New(),
+		Code:             generator.New(),
+		varAddress:       16,
+		lineNumber:       -1,
+		unresolved:       make([]token.Token, 0),
+		varsymunresolved: false,
 	}
 }
 
@@ -48,6 +50,12 @@ func (ha *HackAssembler) SetOutputFile(file *os.File) {
 	ha.Outputfile = file
 }
 
+//FirstPass will fill up the code generator states
+// for variables and labels
+func (ha *HackAssembler) FirstPass(str string) {
+
+}
+
 // AssembleFile What do I need an assembler to do? It should take in file
 // And spit out another file that will be the assembled output
 func (ha *HackAssembler) AssembleFile(str string) {
@@ -63,23 +71,9 @@ func (ha *HackAssembler) AssembleFile(str string) {
 		finalString2, _ := ha.Code.TranslateToken(tkns[0])
 		finalString3, _ := ha.Code.TranslateToken(tkns[2])
 		finalString = finalString1 + finalString2 + finalString3
-		if varsymunresolved {
-			if finalString3 == null {
-				// this is a variable
-				// what ever is the value of address can be
-				// assigned
-
-			}
-			varsymunresolved = false
-		}
 	} else if len(tkns) == 1 {
 		//This is a instruction
 		finalString, err = ha.Code.TranslateToken(tkns[0])
-		if err != nil {
-			// set unresolved flag to true
-			unresolved = true
-			ha.unresolved = append(ha.unresolved, tkns[0])
-		}
 	}
 
 	if len(finalString) > 0 {

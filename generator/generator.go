@@ -47,12 +47,12 @@ type CodeGenInterface interface {
 // New returns an implementation of the code generator
 func New() CodeGenInterface {
 	return &codeGenerator{
-		destMap:    getDestMap(),
-		jumpMap:    getJumpMap(),
-		compMap:    getCompMap(),
-		predefMap:  initializeSymbolTable(),
-		varMap:     make(map[string]int),
-		varAddress: 16,
+		destMap:   getDestMap(),
+		jumpMap:   getJumpMap(),
+		compMap:   getCompMap(),
+		predefMap: initializeSymbolTable(),
+		varMap:    make(map[string]int),
+		symbolMap: make(map[string]int),
 	}
 }
 
@@ -123,6 +123,8 @@ type codeGenerator struct {
 	jumpMap   map[string]string
 	compMap   map[string]string
 	predefMap map[string]int
+	varMap    map[string]int
+	symbolMap map[string]int
 }
 
 func (cg *codeGenerator) getAddressString(add string) (string, error) {
