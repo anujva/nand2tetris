@@ -9,7 +9,8 @@ const (
 	COMP
 	JUMP
 	ADDRESS
-	SYMBOL
+	LABEL
+	VARIABLE
 )
 
 // Token defines the type of the string that we are evaluating

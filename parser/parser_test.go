@@ -50,13 +50,12 @@ var code = `
    MD=M-1
    @LOOP
    D;JGT
-(INFINITE_LOOP)
+( INFINITE_LOOP )
    @INFINITE_LOOP
    0;JMP
 `
 
 func TestPrintLinesAfterRemovingWhiteSpaces(t *testing.T) {
-	t.Skip()
 	codeLines := strings.Split(code, "\n")
 	fmt.Println("The line with whitespaces removed:")
 	for _, codeLine := range codeLines {
@@ -80,6 +79,23 @@ func TestParserCInstruction(t *testing.T) {
 	parser := New()
 	tokens := parser.Parse("CMP;JMP")
 
+	for _, token := range tokens {
+		fmt.Printf("%+v\n", token)
+	}
+}
+
+func TestVariableInstruction(t *testing.T) {
+	parser := New()
+	tokens := parser.Parse("@cheeky")
+
+	for _, token := range tokens {
+		fmt.Printf("%+v\n", token)
+	}
+}
+
+func TestLabelInstruction(t *testing.T) {
+	parser := New()
+	tokens := parser.Parse("(INFINITE_LOOP)")
 	for _, token := range tokens {
 		fmt.Printf("%+v\n", token)
 	}

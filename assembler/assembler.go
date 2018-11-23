@@ -13,7 +13,7 @@ import (
 type HackAssembler struct {
 	Outputfile *os.File
 	Parser     parser.Parser
-	Code       generator.CodeGenInterface
+	Code       *generator.CodeGenerator
 	// It will be required for the assembler to store
 	// some state values. There is a need of storing line
 	// numbers that have not been resolved since we don't
@@ -53,7 +53,15 @@ func (ha *HackAssembler) SetOutputFile(file *os.File) {
 //FirstPass will fill up the code generator states
 // for variables and labels
 func (ha *HackAssembler) FirstPass(str string) {
-
+	ha.lineNumber = ha.lineNumber + 1
+	tkns := ha.Parser.Parse(str)
+	if len(tkns) == 1 && tkns[0].Type == token.LABEL {
+		ha.Code.VarMap[tkns[0].Val] = ha.lineNumber + 1
+	} else if len(tkns) == 1 && tkns[0].Type == token.VARIABLE {
+		if _, ok := ha.Code.VarMap[tkns[0].Val]; !ok {
+			ha.Code.VarMap[tkns[0].Val] = ha.varAddress + 1
+		}
+	}
 }
 
 // AssembleFile What do I need an assembler to do? It should take in file
@@ -73,7 +81,7 @@ func (ha *HackAssembler) AssembleFile(str string) {
 		finalString = finalString1 + finalString2 + finalString3
 	} else if len(tkns) == 1 {
 		//This is a instruction
-		finalString, err = ha.Code.TranslateToken(tkns[0])
+		finalString, _ = ha.Code.TranslateToken(tkns[0])
 	}
 
 	if len(finalString) > 0 {

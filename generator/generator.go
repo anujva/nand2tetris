@@ -36,23 +36,14 @@ func initializeSymbolTable() map[string]int {
 	return immutableSymbolTable
 }
 
-// CodeGenInterface defines the behavior that we
-// want from the code generator. It will look at
-// a token and will return a string which will be
-// the machine language equivalent of it.
-type CodeGenInterface interface {
-	TranslateToken(token token.Token) (string, error)
-}
-
 // New returns an implementation of the code generator
-func New() CodeGenInterface {
-	return &codeGenerator{
+func New() *CodeGenerator {
+	return &CodeGenerator{
 		destMap:   getDestMap(),
 		jumpMap:   getJumpMap(),
 		compMap:   getCompMap(),
 		predefMap: initializeSymbolTable(),
-		varMap:    make(map[string]int),
-		symbolMap: make(map[string]int),
+		VarMap:    make(map[string]int),
 	}
 }
 
@@ -118,20 +109,20 @@ func getCompMap() map[string]string {
 // CodeGenerator is an implementation of the
 // CodeGenInterface, will be used to work the
 // strings that are read from the source code.
-type codeGenerator struct {
+type CodeGenerator struct {
 	destMap   map[string]string
 	jumpMap   map[string]string
 	compMap   map[string]string
 	predefMap map[string]int
-	varMap    map[string]int
-	symbolMap map[string]int
+	VarMap    map[string]int
 }
 
-func (cg *codeGenerator) getAddressString(add string) (string, error) {
+func (cg *CodeGenerator) getAddressString(add string) (string, error) {
 	val := 0
 	var err error
 	// Check if its a predefined symbol
 	if val, ok := cg.predefMap[add]; ok {
+		fmt.Println("Getting the value from predefined: ", val)
 		return getAsBinaryString(val), nil
 	}
 	// Address has to of type string
@@ -143,15 +134,12 @@ func (cg *codeGenerator) getAddressString(add string) (string, error) {
 	// Which means it is a variable or it is a
 	// label symbol.. we need to see if we know
 	// the label already and have kept it in either
-	// the varMap or the labelMap
+	// the VarMap or the labelMap
 	var ok bool
-	if val, ok = cg.varMap[add]; ok {
+	if val, ok = cg.VarMap[add]; ok {
 		return getAsBinaryString(val), nil
 	}
 
-	if val, ok = cg.labelMap[add]; ok {
-		return getAsBinaryString(val), nil
-	}
 	return "", &labelUnknown{add, "label is unknown"}
 }
 
@@ -188,7 +176,8 @@ func getAsBinaryStringSubroutine(val int) string {
 	return getAsBinaryStringSubroutine(val/2) + "1"
 }
 
-func (cg *codeGenerator) TranslateToken(t token.Token) (string, error) {
+//TranslateToken Implementation
+func (cg *CodeGenerator) TranslateToken(t token.Token) (string, error) {
 	// The code generator will look at the token and translate it into
 	// string.
 	switch t.Type {
@@ -200,6 +189,7 @@ func (cg *codeGenerator) TranslateToken(t token.Token) (string, error) {
 	case token.JUMP:
 		return cg.jumpMap[t.Val], nil
 	case token.ADDRESS:
+		fmt.Println("GetAddressAsString called for: ", t.Val)
 		s, err := cg.getAddressString(t.Val)
 		if err != nil {
 			return "", err

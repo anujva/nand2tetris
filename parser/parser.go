@@ -56,12 +56,22 @@ func removeInsideWhiteSpaces(str string) string {
 	return reInsideWs.ReplaceAllString(str, "")
 }
 
+func isALabel(wr string) bool {
+	if wr[0] == '(' {
+		return true
+	}
+	return false
+}
+
 func sliceIntoTokenStrings(wr string) []string {
 	// What should we do here.. we have the string without any ws
 	// so the idea should be ok
 	// At this point we knwo that each line that we get will need
 	// to be split up into either a instruction or c instruction.
-
+	// or a label.
+	if isALabel(wr) {
+		return []string{"#", wr[1 : len(wr)-1]}
+	}
 	switch c := isAInstruction(wr); c {
 	case true:
 		return []string{"@", wr[1:]}
@@ -107,9 +117,19 @@ func convertToTokens(ss []string) []token.Token {
 				},
 			}
 		}
+
 		return []token.Token{
 			token.Token{
-				token.SYMBOL,
+				token.VARIABLE,
+				ss[1],
+			},
+		}
+	}
+
+	if ss[0] == "#" {
+		return []token.Token{
+			token.Token{
+				token.LABEL,
 				ss[1],
 			},
 		}

@@ -86,9 +86,21 @@ func readLineAndPerformAction(
 	}
 }
 
+func readLineAndPerformActionFirstPass(
+	itr FileIterable,
+	a *assembler.HackAssembler,
+) {
+	for itr.hasNext() {
+		str := itr.next()
+		a.FirstPass(str)
+	}
+}
+
 func main() {
 	//Read in the file
 	fileReader := NewFileReader(filepath.Clean(os.Args[1]))
 	a := assembler.New()
+	readLineAndPerformActionFirstPass(fileReader, a)
+	fileReader = NewFileReader(filepath.Clean(os.Args[1]))
 	readLineAndPerformAction(fileReader, a)
 }
