@@ -199,12 +199,6 @@ func (cg *CodeGenerator) TranslateToken(t token.Token) (string, error) {
 			return "", err
 		}
 		return s, nil
-	case token.LABEL:
-		s, err := cg.getAddressString(t.Val)
-		if err != nil {
-			return "", err
-		}
-		return s, nil
 	}
 	return "", nil
 }
