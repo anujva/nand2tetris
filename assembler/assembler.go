@@ -26,8 +26,11 @@ type HackAssembler struct {
 //New returns a pointer to an object of HackAssembler
 func New() *HackAssembler {
 	return &HackAssembler{
-		Parser: parser.New(),
-		Code:   generator.New(),
+		Parser:     parser.New(),
+		Code:       generator.New(),
+		varAddress: 16,
+		lineNumber: -1,
+		unresolved: make([]token.Token, 0),
 	}
 }
 
@@ -63,6 +66,9 @@ func (ha *HackAssembler) AssembleFile(str string) {
 		if varsymunresolved {
 			if finalString3 == null {
 				// this is a variable
+				// what ever is the value of address can be
+				// assigned
+
 			}
 			varsymunresolved = false
 		}
